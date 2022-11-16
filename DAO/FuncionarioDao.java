@@ -123,6 +123,45 @@ public ArrayList<Funcionario> getListaSupervisores(){
         } 
         return funcionario;
     }
+    public boolean remove(int id){
+        String sql = "DELETE FROM funcionario WHERE numat = ?";
+        int funcionariosRemovidos = 0;
+        try{
+            PreparedStatement stmt = this.connection.prepareStatement(sql);
+            stmt.setLong(1, id);
+            //executeUpdate retorna a quantidade de linhas removidas
+            funcionariosRemovidos = stmt.executeUpdate();
+            stmt.close();
+        }
+        catch (SQLException  e){
+            throw new RuntimeException(e);
+        }
+        return funcionariosRemovidos == 1;
+    }
+    public boolean atualiza(Funcionario funcionario){
+        String sql = "UPDATE funcionario SET  nome = ?, salario = ?, sexo = ?, ndepto = ?, nsuper = ? WHERE numat = ?";
+        int funcionariosAtualizados = 0;
+        try{
+            //prepared statement para inserção
+            PreparedStatement stmt = this.connection.prepareStatement(sql);
+            //seta os valores
+            
+            stmt.setString(1,funcionario.getNome());
+            stmt.setDouble(2,funcionario.getSalario());
+            stmt.setString(3,funcionario.getSexo());
+            stmt.setLong(4,funcionario.getNdepto());
+            stmt.setLong(5,funcionario.getNsuper());
+            stmt.setLong(6,funcionario.getNumat());
+            //executeUpdate retorna a quantidade de linhas removidas
+            funcionariosAtualizados = stmt.executeUpdate();
+            stmt.close();
+        }
+        catch (SQLException  e){
+            throw new RuntimeException(e);
+        }
+        return funcionariosAtualizados == 1;
+    }
+       
     
 }
     

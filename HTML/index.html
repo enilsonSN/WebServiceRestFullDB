@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>WebServiceSPA</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <h1>Gerenciamento de Funcionários</h1>
+        <table>
+            
+                <tr>
+                    <td>Numat:</td> <td><input type="text" id="txtNumat"</td>
+                </tr>
+                
+                <tr>
+                    <td>Nome:</td> <td><input type="text" id="txtNome"</td>
+                </tr>
+                
+                <tr>
+                    <td>Salario:</td> <td><input type="text" id="txtSalario"</td>
+                </tr>
+                
+                <tr>
+                    <td>Sexo:</td> <td><input type="text" id="txtSexo"</td>
+                </tr>
+                
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="button" value="Consultar" onclick="consultarFuncionario()">
+                        <input type="button" value="Adicionar" onclick="adicionarFuncionario()">
+                        <input type="button" value="Atualizar" onclick="atualizarFuncionario()">
+                        <input type="button" value="Remover" onclick="removerFuncionario()">
+                        <input type="button" value="Limpar" onclick="limparCampos()">                        
+                    </td>
+                </tr>               
+        </table>
+        <h1><label id="msgErro">Mensagem status: </label></h1>
+    </body>
+       
+    <script>
+        const txtNumat = document.getElementById('txtNumat');
+        const txtNome = document.getElementById('txtNome');
+        const txtSalario = document.getElementById('txtSalario');
+        const txtSexo = document.getElementById('txtSexo');
+        const msgErro = document.getElementById('msgErrot');
+        
+        async function consultarFuncionario(){
+            console.log("consultarFuncionario()")
+            fetch('http://localhost:8080/empresa/sistema/rest/funcionarios/'+txtNumat.value).
+            then(resposta =>{
+                //verifica se a conexao falhou
+                if (!resposta.ok){
+                    // gera um erro que caira no catch abaixo
+                    throw Error(resposta.status);
+                }
+                return resposta.json();
+            }).
+            then(jsonResposta => carregarFuncionario(jsonResposta)). //ok
+            catch(erro => msgErro.innerHTML = 'Mensagem status: Funcionario Numat['+ txtNumat.value+
+                    ']não encontrado. Erro['+ erro.message+']');//falha
+        }
+        
+       
+        
+        function carregarFuncionario(jsonFuncionario){
+            txtNumat.value = jsonFuncionario.numat;
+            txtNome.value = jsonFuncionario.nome;
+            txtSalario.value = jsonFuncionario.salario;
+            txtSexo.value = jsonFuncionario.sexo;
+        }
+        async function adicionarFuncionario(){
+            
+            fetch('http://localhost:8080/empresa/sistema/rest/funcionarios/',
+                {method: 'POST',
+                    body: JSON.stringify({
+                        numat: txtNumat.value,
+                        nome:txtNome.value,
+                        salario: txtSalario.value,
+                        sexo:txtSexo.value
+                    }),
+                    headers: {
+                        "Content-type":"application/json"
+                    }
+            }).
+            then(resposta =>{
+                //verifica se a conexao falhou
+                if (!resposta.ok){
+                    // gera um erro que caira no catch abaixo
+                    throw Error(resposta.status);
+                }
+                return resposta;
+            }).
+            then(jsonResposta => msgErro.innerHTML = 'Mensagem status: Funcionario Numat['+txtNumat.value+']inserido.').
+            catch(erro => msgErro.innerHTML = 'Mensagem status: Funcionario Numat['+ txtNumat.value+
+                    ']não inserido. Erro['+ erro.message+']');//falha
+        }
+        async function atualizarFuncionario(){
+            
+            fetch('http://localhost:8080/empresa/sistema/rest/funcionarios/',
+                {method: 'PUT',
+                    body: JSON.stringify({
+                        numat: txtNumat.value,
+                        nome:txtNome.value,
+                        salario: txtSalario.value,
+                        sexo:txtSexo.value
+                    }),
+                    headers: {
+                        "Content-type":"application/json"
+                    }
+            }).
+            then(resposta =>{
+                //verifica se a conexao falhou
+                if (!resposta.ok){
+                    // gera um erro que caira no catch abaixo
+                    throw Error(resposta.status);
+                }
+                return resposta;
+            }).
+            then(jsonResposta => msgErro.innerHTML = 'Mensagem status: Funcionario Numat['+txtNumat.value+']Atualizado.').
+            catch(erro => msgErro.innerHTML = 'Mensagem status: Funcionario Numat['+ txtNumat.value+
+                    ']não atualizado. Erro['+ erro.message+']');//falha
+        }
+        async function removerFuncionario(){
+            
+            fetch('http://localhost:8080/empresa/sistema/rest/funcionarios/'+txtNumat.value,
+                {method: 'DELETE'}).       
+            then(resposta =>{
+                //verifica se a conexao falhou
+                if (!resposta.ok){
+                    // gera um erro que caira no catch abaixo
+                    throw Error(resposta.status);
+                }
+                return resposta;
+            }).
+            then(jsonResposta => msgErro.innerHTML = 'Mensagem status: Funcionario Numat['+txtNumat.value+']removido.').
+            catch(erro => msgErro.innerHTML = 'Mensagem status: Funcionario Numat['+ txtNumat.value+
+                    ']não removido. Erro['+ erro.message+']');//falha
+        }
+        
+        
+        
+        
+    </script>
+</html>
+
